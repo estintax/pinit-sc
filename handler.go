@@ -25,6 +25,17 @@ func ActionsHandler(args []string) bool {
 			return false
 		}
 		return false
+	case "stop":
+		conn := ConnectToPinit()
+		if conn != nil {
+			StopService(conn, args[2])
+			conn.Close()
+			return true
+		} else {
+			fmt.Println(args[0] + ": error: missed service name")
+			return false
+		}
+		return false
 	default:
 		fmt.Println(args[0] + ": error: unknown action")
 		return false

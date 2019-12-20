@@ -43,6 +43,26 @@ func StartService(conn net.Conn, service string) bool {
 	}
 }
 
+func StopService(conn net.Conn, service string) bool {
+	conn.Write([]byte("STOP " + service + "\n"))
+	response, err := bufio.NewReader(conn).ReadString('\n')
+	if err != nil {
+		fmt.Println(os.Args[0] + ": error: " + err.Error())
+	}
+	response = strings.Trim(response, "\n")
+	params := strings.Split(response, " ")
+	switch params[1] {
+	case "FAIL":
+		fmt.Println(os.Args[0] + ": stop service failed. Maybe, service already stopped")
+		return false
+	case "SUCCESS":
+		return true
+	default:
+		fmt.Println(os.Args[0] + ": unknown error")
+		return false
+	}
+}
+
 func SendPing(conn net.Conn) bool {
 	conn.Write([]byte("PING\n"))
 	response, err := bufio.NewReader(conn).ReadString('\n')
